@@ -1,8 +1,7 @@
 FROM node:lts-alpine
-ARG REACT_APP_ENVIRONMENT
-ARG REACT_APP_ORGANISATION
+RUN mkdir /app
 WORKDIR /app
-COPY package*.json ./
+COPY package.json /app
 RUN yarn install
-COPY . .
-RUN yarn run build
+COPY . /app
+RUN yarn build
