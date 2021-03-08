@@ -1,7 +1,5 @@
 
-<div align="center" >Crafted for <strong>React task to display Github repos!!</strong> <br /> </div>
-
-<br />
+<div align="center" > <strong>React task for displaying Github repos!!</strong> <br /> </div>
 
 ---
 
