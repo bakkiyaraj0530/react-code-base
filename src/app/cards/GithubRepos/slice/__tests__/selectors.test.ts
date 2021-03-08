@@ -2,7 +2,7 @@ import * as selectors from '../selectors';
 import { RootState } from 'types';
 import { RepoErrorType } from '../types';
 import { initialState } from '..';
-import { Repo } from 'types/Repo';
+import { ReposList } from 'types/Repo';
 
 describe('GithubRepoForm selectors', () => {
   let state: RootState = {};
@@ -12,19 +12,19 @@ describe('GithubRepoForm selectors', () => {
   });
 
   it('should select the initial state', () => {
-    expect(selectors.selectUsername(state)).toEqual(initialState.username);
+    expect(selectors.selectRepositoryname(state)).toEqual(initialState.repositoryname);
   });
 
-  it('should select username', () => {
-    const username = 'test';
+  it('should select respo name', () => {
+    const reponame = 'test';
     state = {
-      githubRepoForm: { ...initialState, username: username },
+      githubRepoForm: { ...initialState, repositoryname: reponame },
     };
-    expect(selectors.selectUsername(state)).toEqual(username);
+    expect(selectors.selectRepositoryname(state)).toEqual(reponame);
   });
 
   it('should select username', () => {
-    const repo = { name: 'test' } as Repo;
+    const repo = { name: 'test' } as ReposList;
     state = {
       githubRepoForm: { ...initialState, repositories: [repo] },
     };
@@ -32,7 +32,7 @@ describe('GithubRepoForm selectors', () => {
   });
 
   it('should select error', () => {
-    const error = RepoErrorType.USER_NOT_FOUND;
+    const error = RepoErrorType.REPOSITORY_NOT_FOUND;
     state = {
       githubRepoForm: { ...initialState, error: error },
     };

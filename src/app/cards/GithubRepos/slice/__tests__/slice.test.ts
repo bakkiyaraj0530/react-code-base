@@ -1,6 +1,6 @@
 import * as slice from '..';
 import { ContainerState, RepoErrorType } from '../types';
-import { Repo } from 'types/Repo';
+import { ReposList } from 'types/Repo';
 
 describe('GithubRepoForm slice', () => {
   let state: ContainerState;
@@ -16,10 +16,10 @@ describe('GithubRepoForm slice', () => {
   it('should handle changeUsername', () => {
     const text = 'test';
     expect(
-      slice.reducer(state, slice.githubRepoFormActions.changeUsername(text)),
+      slice.reducer(state, slice.githubRepoFormActions.changeRepositoryname(text)),
     ).toEqual<ContainerState>({
       ...slice.initialState,
-      username: text,
+      repositoryname: text,
     });
   });
 
@@ -35,7 +35,7 @@ describe('GithubRepoForm slice', () => {
   });
 
   it('should handle reposLoaded', () => {
-    const repos = [{ name: 'test' }] as Repo[];
+    const repos = [{ name: 'test' }] as ReposList[];
     expect(
       slice.reducer(state, slice.githubRepoFormActions.reposLoaded(repos)),
     ).toEqual<ContainerState>({
@@ -46,12 +46,14 @@ describe('GithubRepoForm slice', () => {
   });
 
   it('should handle repoError', () => {
-    const repoError = RepoErrorType.USER_NOT_FOUND;
+    const repoError = RepoErrorType.REPOSITORY_NOT_FOUND;
     expect(
       slice.reducer(state, slice.githubRepoFormActions.repoError(repoError)),
     ).toEqual<ContainerState>({
-      ...slice.initialState,
-      error: repoError,
+        repositoryname: '',
+        repositories: [],
+        loading: false,
+       error: repoError,
     });
   });
 });

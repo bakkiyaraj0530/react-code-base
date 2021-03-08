@@ -12,15 +12,19 @@ export function* getAllRepos() {
   yield delay(500);
   try {
     const repos: RepoListData = yield call(fetchData, '');
-    if (repos?.data.viewer?.repositories?.nodes?.length > 0) {
+    if (repos?.data?.viewer?.repositories?.nodes?.length > 0) {
       // Add the repos list into repositoties store
       yield put(actions.reposLoaded(repos?.data?.viewer?.repositories?.nodes));
-    } else {
+    } else if(repos?.data?.viewer === undefined) {
+      yield put(actions.repoError(RepoErrorType.REPOSITORYNAME_EMPTY));
+     } else {
       yield put(actions.repoError(RepoErrorType.REPOSITORY_NOT_FOUND));
-    }
+     }
   } catch (err) {
     if (err.response?.status === 404) {
-      yield put(actions.repoError(RepoErrorType.HAS_NO_REPO));
+      yield put(actions.repoError(RepoErrorType.REPOSITORY_NOT_FOUND));
+    } else if (err.message === 'Failed to fetch') {
+      yield put(actions.repoError(RepoErrorType.GITHUB_RATE_LIMIT));
     } else if (err.message === 'Failed to fetch') {
       yield put(actions.repoError(RepoErrorType.GITHUB_RATE_LIMIT));
     } else {

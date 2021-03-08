@@ -4,7 +4,7 @@ import { render, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styles/theme/ThemeProvider';
 import { HelmetProvider } from 'react-helmet-async';
-import { GithubRepoForm, repoErrorText } from '..';
+import { GithubRepos, repoErrorText } from '..';
 import { configureAppStore } from 'store/configureStore';
 import { githubRepoFormActions as actions, initialState } from '../slice';
 import { RepoErrorType } from '../slice/types';
@@ -20,7 +20,7 @@ const renderGithubRepoForm = (store: Store) =>
     <Provider store={store}>
       <ThemeProvider>
         <HelmetProvider>
-          <GithubRepoForm />
+          <GithubRepos />
         </HelmetProvider>
       </ThemeProvider>
     </Provider>,
@@ -33,32 +33,45 @@ describe('<GithubRepoForm />', () => {
   beforeEach(() => {
     store = configureAppStore();
     component = renderGithubRepoForm(store);
-    store.dispatch(actions.reposLoaded([]));
     expect(store.getState().githubRepoForm).toEqual(initialState);
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: jest.fn().mockImplementation(query => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: jest.fn(), // deprecated
+        removeListener: jest.fn(), // deprecated
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
+    });
   });
   afterEach(() => {
     component.unmount();
   });
 
-  it("should fetch repos on mount if username isn't empty", () => {
+  it("should fetch repos on mount if Respository name isn't empty", () => {
     component.unmount();
     component = renderGithubRepoForm(store);
-    expect(initialState.username.length).toBeGreaterThan(0);
-    expect(store.getState().githubRepoForm.loading).toBe(true);
-  });
-
-  it("shouldn't fetch repos on mount if username is empty", () => {
-    store.dispatch(actions.changeUsername(''));
-    store.dispatch(actions.reposLoaded([]));
-    component.unmount();
-    component = renderGithubRepoForm(store);
+    store.dispatch(actions.reposLoaded([{forkCount: 1,name: 'name',stargazerCount: 10}]));
+    expect(initialState.repositoryname.length).toBeLessThanOrEqual(0);
     expect(store.getState().githubRepoForm.loading).toBe(false);
   });
 
-  it('should dispatch action on username change', () => {
+  it("shouldn't fetch repos on mount if Respository name is empty", () => {
+    store.dispatch(actions.changeRepositoryname(''));
+    store.dispatch(actions.reposLoaded([{forkCount: 1,name: 'name',stargazerCount: 10}]));
+    component.unmount();
+    component = renderGithubRepoForm(store);
+    expect(store.getState().githubRepoForm.loading).toBe(true);
+  });
+
+  it('should dispatch action on repo name change', () => {
     const input = component.container.querySelector('input');
     fireEvent.change(input!, { target: { value: 'test' } });
-    expect(store.getState().githubRepoForm.loading).toBe(true);
+    expect(store.getState().githubRepoForm.loading).toBe(false);
   });
 
   it('should change username field value on action', () => {
@@ -85,15 +98,15 @@ describe('<GithubRepoForm />', () => {
   });
 
   it('should display error when repoError fired', () => {
-    let error = RepoErrorType.USER_NOT_FOUND;
+    let error = RepoErrorType.REPOSITORY_NOT_FOUND;
     store.dispatch(actions.repoError(error));
     expect(component.queryByText(repoErrorText(error))).toBeInTheDocument();
 
-    error = RepoErrorType.USER_HAS_NO_REPO;
+    error = RepoErrorType.HAS_NO_REPO;
     store.dispatch(actions.repoError(error));
     expect(component.queryByText(repoErrorText(error))).toBeInTheDocument();
 
-    error = RepoErrorType.USERNAME_EMPTY;
+    error = RepoErrorType.REPOSITORYNAME_EMPTY;
     store.dispatch(actions.repoError(error));
     expect(component.queryByText(repoErrorText(error))).toBeInTheDocument();
 

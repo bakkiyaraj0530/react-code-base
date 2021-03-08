@@ -8,7 +8,7 @@ import { GithubRepositiesState, RepoErrorType } from './types';
 export const initialState: GithubRepositiesState = {
   repositoryname: '',
   repositories: [],
-  loading: false,
+  loading: true,
   error: null,
 };
 
@@ -34,7 +34,7 @@ const slice = createSlice({
       state.loading = false;
     },
     loadRepoByName(state, action: PayloadAction<string>) {
-      state.loading = true;
+      state.loading = false;
       state.error = null;
       state.repositoryname = action.payload;
     },

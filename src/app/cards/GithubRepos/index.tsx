@@ -39,7 +39,6 @@ export function GithubRepos() {
       title: 'Stars',
       dataIndex: 'stargazerCount',
       render: (stargazerCount: number, index) => {
-        console.log(index);
         return `🌟  ${stargazerCount} `;
       },
 
