@@ -7,7 +7,7 @@ export const fetchData = (reponame: String | null) =>
   request(URL, {
     method: 'POST',
     headers: {
-      Authorization: 'Bearer 2e988a6e11255e5f153beed37087f91b013a93f4',
+      Authorization: 'Bearer 61895de0bf18225d0e8e07cf7dd6c46f5c6109ce',
     },
     body: JSON.stringify(
       reponame ? queryFetchRepoByName(reponame) : queryfetchRepos(),
